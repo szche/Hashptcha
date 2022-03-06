@@ -1,0 +1,25 @@
+<html>
+		<head>
+				<title>Sample website with HASHPTCHA integrated</title>
+		</head>
+		<body>
+				<h1>Welcome to my website!</h1>
+
+				<form action="#">
+
+						<label for="uname"><b>Username</b></label>
+						<input type="text" placeholder="Enter Username" name="uname" required>
+						<br/>
+
+						<label for="psw"><b>Password</b></label>
+						<input type="password" placeholder="Enter Password" name="psw" required>
+						<br/>
+						<br/>
+
+						<div class="hashptcha" site-key="0807f9409fabbca17"></div>
+						<br/>
+						<button type="submit">Login</button>
+				</form>
+				<script src="hashptcha.js"></script>
+		</body>
+</html>
