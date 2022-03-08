@@ -14,6 +14,8 @@ const hashptcha = new class {
 		this.iframe.height="60px";
 		this.iframe.scrolling="no";
 		this.iframe.style.border="0px";
+		this.iframe.style.marginTop="20px";
+		this.iframe.style.marginBottom="20px";
 		this.div.appendChild(this.iframe);
 	}
 }();
