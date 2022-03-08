@@ -1,11 +1,7 @@
 import sqlite3
 import os
+from config import DB_FILENAME, SUPPORTED_HASHES
 
-DB_FILENAME = "db.db"
-SUPPORTED_HASHES = [
-            ('SHA256', 256), 
-            ("MD5", 128)
-]
 
 class Database:
     def __init__(self, supported_hashes=SUPPORTED_HASHES):
