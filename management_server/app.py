@@ -4,11 +4,11 @@ from config import SUPPORTED_HASHES
 from work_dispatcher import WorkDispatcher
 from test_miner import Miner
 
-
 app = Flask(__name__)
 database = Database()
 work_dispatcher = WorkDispatcher()
 
+# Main admin panel for displaying info
 @app.route("/")  
 def home():
     return render_template("index.html")
@@ -33,16 +33,26 @@ def frame():
 
 # Adding new hash to the cracking database
 @app.route("/hash", methods=['POST'])
-def verify():
+def hash():
     data = request.get_json()
     database.add_hash(data['hash'], data['type'])
     return jsonify("OK"), 200
 
+# Returns a random task to crack
 @app.route("/get-task", methods=['GET'])
 def get_task():
     task = work_dispatcher.select_task(database.get_all("hashes"))
     return jsonify(task), 200
 
+# Verifies the task has been completed correctly
+# Collects data on work done
+@app.route("/verify", methods=["POST"])
+def verify():
+    data = request.get_json()
+    verification = work_dispatcher.verify_task(data)
+    if verification == True:
+        return jsonify("Ok"), 200
+    return jsonify("Error"), 403
 
 """
 @app.route("/add-site")
@@ -54,17 +64,6 @@ def verify():
 def verify():
     #TODO
     pass
-
-@app.route("/get-task")
-def get_task():
-    #TODO
-    pass
-
-@app.route("/verify")
-def verify():
-    #TODO
-    pass
-
 """
 
 if __name__ == "__main__":
