@@ -1,0 +1,20 @@
+#captcha {
+		width: 250px;
+		height: 60px;
+		border: 2px solid lightgray;
+}
+
+#square-start {
+		width: 40px;
+		height: 40px;
+		display: inline-block;
+		border-radius: 5px;
+		margin-right: 10px;
+		border-width: 2px;
+}
+
+#robot-span {
+		position: absolute;
+		margin-top: 5px;
+		margin-left: 10px;
+}
