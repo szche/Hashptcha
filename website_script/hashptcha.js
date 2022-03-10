@@ -30,11 +30,10 @@ const hashptcha = new class {
 			}
 			else {
 				this.input = this.document.createElement("input");
-				this.input.type="hidden";
-				this.input.id="hashptcha-answer";
-				this.input.value=data_string;
+				this.input.type = "hidden";
+				this.input.id = "hashptcha-answer";
+				this.input.value = data_string;
 				document.querySelector(".hashptcha").appendChild(this.input);
-
 			}
 		});
 	}
