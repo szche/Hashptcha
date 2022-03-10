@@ -2,6 +2,23 @@ const DICT = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 let currently_working = false;
 let solved_data;
 
+// Verification for debugging purposes
+// function verify(data) {
+// 	fetch('/verify', {
+// 		method: 'POST',
+// 		headers: {
+// 			'Content-Type': 'application/json',
+// 		},
+// 		body: JSON.stringify(data),
+// 	})
+// 		.then(response => response.json())
+// 		.then(data => {
+// 			console.log('Success:', data);
+// 		})
+// 		.catch((error) => {
+// 			console.error('Error:', error);
+// 		});
+// }
 
 let allStrings = function* (chars) {
 	yield '';
@@ -14,6 +31,10 @@ const hex2bin = (data) => data.split('').map(i =>
 
 async function md5(data) {
 	return hashwasm.md5(data);
+}
+
+async function sha256(data) {
+	return hashwasm.sha256(data);
 }
 
 async function start_work(data) {
@@ -53,6 +74,7 @@ function fetchTask() {
 			const task_completed = start_work(data).then((x) => {
 				solved_data = x;
 				markAsDone();
+				//verify(solved_data); //verification for debuggging purposes
 				window.parent.postMessage(solved_data, '*');
 				currently_working = false;
 			});
@@ -60,11 +82,5 @@ function fetchTask() {
 }
 
 $("#square-start").click(function () {
-	console.log("CLICKED");
-	if(currently_working == false) fetchTask();
+	if (currently_working == false) fetchTask();
 });
-
-var url = (window.location != window.parent.location)
-            ? document.referrer
-            : document.location.href;
-console.log(url);
