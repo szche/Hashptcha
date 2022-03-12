@@ -36,7 +36,7 @@ class Database:
 
         self.c.execute('''
                   CREATE TABLE IF NOT EXISTS tasks 
-                  ([token] TEXT PRIMARY KEY, [used] BOOL, [hash_type] TEXT, [target] TEXT, [hash_id] INTEGER)
+                  ([token] TEXT PRIMARY KEY, [used] BOOL, [hash_type] TEXT, [target] TEXT, [prefix] TEXT, [hash_id] INTEGER)
                   ''')
 
         self.c.execute('''
@@ -85,9 +85,9 @@ class Database:
         data = self.c.fetchall()
         return data   
 
-    def set_new_task(self, token, hash_type, target, hashId):
-        command = 'INSERT INTO tasks(token, used, hash_type, target, hash_id) VALUES (?, ?, ?, ?, ?)'
-        self.c.execute(command, (token, False, hash_type, target, hashId))
+    def set_new_task(self, token, hash_type, target, prefix, hashId):
+        command = 'INSERT INTO tasks(token, used, hash_type, target, prefix, hash_id) VALUES (?, ?, ?, ?, ?, ?)'
+        self.c.execute(command, (token, False, hash_type, target, prefix, hashId))
         self.conn.commit()
         return True
 
