@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Hashptcha - hashes{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/hashes.css') }}">
+{% endblock %}
+{% block content %}
+
+<h1>Hashes</h1>
+
+<div id="add-new-hash-form">
+
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Hash</span>
+        <input type="text" class="form-control" placeholder="289dff0...f7129e7" id="input-hash-text" required>
+    </div>
+
+    <div class="input-group mb-3">
+        <label class="input-group-text" for="input-hash-type">Hash type</label>
+        <select class="form-select" id="input-hash-type">
+            {% for h in supported_types %}
+            <option value="{{ h[0] }}">{{ h[0] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="button" class="btn btn-primary" id="add-hash-button">Add</button>
+</div>
+
+<div id="hashes-table">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Hash</th>
+                <th scope="col">Type</th>
+                <th scope="col">Plaintext</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for h in hashes %}
+            <tr>
+                {# Display ID, Hash, Hash_type, Plaintext #}
+                <th scope="row">{{ h[0] }}</th>
+                <td>{{ h[1] }}</td>
+                <td>{{ h[2] }}</td>
+                <td>{{ h[4] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/hashes.js') }}"></script>
+{% endblock %}
