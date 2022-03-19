@@ -36,7 +36,7 @@ class Database:
 
         self.c.execute('''
                   CREATE TABLE IF NOT EXISTS tasks 
-                  ([token] TEXT PRIMARY KEY, [used] BOOL, [hash_type] TEXT, [target] TEXT, [prefix] TEXT, [hash_id] INTEGER, [passing_suffix] TEXT)
+                  ([token] TEXT PRIMARY KEY, [used] BOOL, [hash_type] TEXT, [target] TEXT, [start_point] TEXT, [hash_id] INTEGER, [pass_point] TEXT)
                   ''')
 
         self.c.execute('''
@@ -85,14 +85,14 @@ class Database:
         data = self.c.fetchall()
         return data   
 
-    def set_new_task(self, token, hash_type, target, prefix, hashId):
-        command = 'INSERT INTO tasks(token, used, hash_type, target, prefix, hash_id, passing_suffix) VALUES (?, ?, ?, ?, ?, ?, ?)'
-        self.c.execute(command, (token, False, hash_type, target, prefix, hashId, ''))
+    def set_new_task(self, token, hash_type, target, start_point, hashId):
+        command = 'INSERT INTO tasks(token, used, hash_type, target, start_point, hash_id, pass_point) VALUES (?, ?, ?, ?, ?, ?, ?)'
+        self.c.execute(command, (token, False, hash_type, target, start_point, hashId, ''))
         self.conn.commit()
         return True
 
-    def update_token(self, token, status, suffix):
-        self.c.execute("UPDATE tasks SET used = ?, passing_suffix = ? WHERE token = ?", (status, suffix, token))
+    def update_token(self, token, status, pass_point):
+        self.c.execute("UPDATE tasks SET used = ?, pass_point = ? WHERE token = ?", (status, pass_point, token))
         self.conn.commit()
 
     def find_tasks_for_hash(self, hashID):
