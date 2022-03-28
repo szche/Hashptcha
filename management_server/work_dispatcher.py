@@ -10,7 +10,7 @@ class WorkDispatcher:
     def __init__(self):
         self.db = Database()
         self.default_targets = {
-            'SHA256': 10,
+            'SHA256': 18,
             'MD5': 20
         }
 
