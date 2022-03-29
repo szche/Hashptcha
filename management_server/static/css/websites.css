@@ -1,0 +1,20 @@
+#add-new-website-form {
+    margin-top: 40px;
+    margin-bottom: 50px;
+    border: 1px solid grey;
+    padding: 30px;
+    border-radius: 5px;
+}
+
+#add_website_alert {
+    display: none;
+}
+
+#add_website_alert p {
+    margin: 0px;
+    padding: 0px;
+}
+
+.bold-alert {
+    font-weight: bold;
+}

@@ -56,7 +56,32 @@ def hashes():
 # And their secret-public keypairs
 @app.route("/websites")  
 def websites():
-    return render_template("websites.html")
+    all_websites = database.get_all("websites")
+    all_tasks = database.get_all("tasks")
+    data = []
+    for website in all_websites:
+        w = {
+            'website_id': website[0],
+            'url': website[1],
+            'secret_key': website[2],
+            'public_key': website[3],
+            'tasks_scheduled': 0,
+            'tasks_completed': 0
+        }
+        data.append(w)
+    for t in all_tasks:
+        website_id = t[7]
+        # Task not completed
+        if t[1] == 0:
+            to_add = (1, 0)
+        # Task completed
+        else:
+            to_add = (1, 1)
+        for website in data:
+            if website['website_id'] == website_id:
+                website['tasks_scheduled'] += to_add[0]
+                website['tasks_completed'] += to_add[1]
+    return render_template("websites.html", data=data)
 
 # Displaying an iframe with cracking client
 @app.route("/frame")
@@ -74,7 +99,8 @@ def hash():
 # Returns a random task to crack
 @app.route("/get-task", methods=['GET'])
 def get_task():
-    task = work_dispatcher.select_task(database.get_all("hashes"))
+    key = request.args.get('k')
+    task = work_dispatcher.select_task(database.get_all("hashes"), key)
     return jsonify(task), 200
 
 # Verifies the task has been completed correctly
@@ -87,25 +113,14 @@ def verify():
         return jsonify("Ok"), 200
     return jsonify("Error"), 403
 
-"""
-@app.route("/add-site")
-def verify():
-    #TODO
-    pass
+# Adds new website to the database
+@app.route("/website", methods=["POST"])
+def add_new_website():
+    data = request.get_json()
+    return_data = database.add_new_website(data['url'])
+    return jsonify(return_data), 200
 
-@app.route("/remove-site")
-def verify():
-    #TODO
-    pass
-"""
+
 
 if __name__ == "__main__":
-    #database.add_hash("202cb962ac59075b964b07152d234b70", "MD5")
     app.run(debug=True)
-    # all_hashes = database.get_all("hashes")
-    # print("all hashes: ", all_hashes)
-    # task = work_dispatcher.select_task(all_hashes)
-    # miner = Miner()
-    # completed = miner.mine(task)
-    # work_dispatcher.verify_task(completed)
-

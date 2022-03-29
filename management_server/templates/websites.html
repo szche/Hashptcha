@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Hashptcha - websites{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/websites.css') }}">
+{% endblock %}
+{% block content %}
+
+<div class="alert alert-success" role="alert" id="add_website_alert">
+    <h4 class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+            class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img"
+            aria-label="Warning:">
+            <path
+            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+        </svg>
+        New URL added!
+    </h4>
+    <p>Please write these keys down!</p>
+    <p>Public Key: <span id="public_key" class="bold-alert"></span></p>
+    <p>Secret key: <span id="secret_key" class="bold-alert"></span></p>
+</div>
+
+
+<div id="add-new-website-form">
+    <h4>Add new website</h4>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Website URL</span>
+        <input type="url" class="form-control" placeholder="https://example.com" id="input-website-text" required>
+    </div>
+
+    <button type="button" class="btn btn-primary" id="add-website-button">Add</button>
+</div>
+
+<div id="hashes-table">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">URL</th>
+                <th scope="col">Public key</th>
+                <th scope="col">Private key</th>
+                <th scope="col">Tasks scheduled</th>
+                <th scope="col">Tasks completed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for w in data %}
+            <tr>
+                {# Display ID, Hash, Hash_type, Plaintext #}
+                <th scope="row">{{ w['website_id'] }}</th>
+                <td>{{ w['url'] }}</td>
+                <td>{{ w['public_key'] }}</td>
+                <td>{{ w['secret_key'] }}</td>
+                <td>{{ w['tasks_scheduled'] }}</td>
+                <td>{{ w['tasks_completed'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/websites.js') }}"></script>
+{% endblock %}
