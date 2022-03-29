@@ -15,10 +15,10 @@ After clicking the *"I am not a robot"* button, client receives a following cryp
 
 ```json
 {
-	hash_type: 'MD5',
-	start_point: '100110000111001000000101',
-	target: '10001000010111101100',
-	token: '44b0f554-1348-42be-a3f5-c24885611530'
+	'hash_type': 'MD5',
+	'start_point': '100110000111001000000101',
+	'target': '10001000010111101100',
+	'token': '44b0f554-1348-42be-a3f5-c24885611530'
 }
 ```
 where:
@@ -31,9 +31,9 @@ where:
 Once user finds the solution, he then sends the solution to the application back-end alongside his form data. Server sends following request to the Hashptcha service provider to ensure the puzzle has been solved correctly:
 ```json
 {
-	token: '44b0f554-1348-42be-a3f5-c24885611530',
-	value: '101010001000110011110101',
-	secret_key: '0c7906a0-8c45-4cb1-b8b2-cf8cd259d7fd'
+	'token': '44b0f554-1348-42be-a3f5-c24885611530',
+	'value': '101010001000110011110101',
+	'secret_key': '0c7906a0-8c45-4cb1-b8b2-cf8cd259d7fd'
 }
 ```
 where:
