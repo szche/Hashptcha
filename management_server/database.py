@@ -1,7 +1,7 @@
 import sqlite3
 import os
 from config import DB_FILENAME, SUPPORTED_HASHES
-
+from uuid import uuid4
 
 class Database:
     def __init__(self, supported_hashes=SUPPORTED_HASHES):
@@ -9,7 +9,6 @@ class Database:
         if not self.check_db():
             self.create_db()
             for h in supported_hashes:
-                print(supported_hashes)
                 self.add_hash_support(h)
         else:
             self.connect()
@@ -31,12 +30,12 @@ class Database:
         self.connect()
         self.c.execute('''
                   CREATE TABLE IF NOT EXISTS websites 
-                  ([pubkey] TEXT PRIMARY KEY, [privkey] TEXT)
+                  ([website_id] INTEGER PRIMARY KEY, [url] TEXT, [privkey] TEXT, [pubkey] TEXT)
                   ''')
 
         self.c.execute('''
                   CREATE TABLE IF NOT EXISTS tasks 
-                  ([token] TEXT PRIMARY KEY, [used] BOOL, [hash_type] TEXT, [target] TEXT, [start_point] TEXT, [hash_id] INTEGER, [pass_point] TEXT)
+                  ([token] TEXT PRIMARY KEY, [used] BOOL, [hash_type] TEXT, [target] TEXT, [start_point] TEXT, [hash_id] INTEGER, [pass_point] TEXT, [website_id] INT)
                   ''')
 
         self.c.execute('''
@@ -74,20 +73,22 @@ class Database:
         self.c.execute("UPDATE hashes SET cracked = ?, plaintext = ? WHERE hash_id = ?", (status, plaintext, hashId))
         self.conn.commit()
 
-
+    # Returns all from variable table
     def get_all(self, table):
         self.c.execute(f"SELECT * FROM {table}")
         data = self.c.fetchall()
         return data
 
+    # Returns tasks associated with token variable
     def get_task(self, token):
         self.c.execute("SELECT * FROM tasks WHERE token = '%s'" % token)
         data = self.c.fetchall()
         return data   
 
-    def set_new_task(self, token, hash_type, target, start_point, hashId):
-        command = 'INSERT INTO tasks(token, used, hash_type, target, start_point, hash_id, pass_point) VALUES (?, ?, ?, ?, ?, ?, ?)'
-        self.c.execute(command, (token, False, hash_type, target, start_point, hashId, ''))
+    # Sets new task
+    def set_new_task(self, token, hash_type, target, start_point, hashId, website_id):
+        command = 'INSERT INTO tasks(token, used, hash_type, target, start_point, hash_id, pass_point, website_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        self.c.execute(command, (token, False, hash_type, target, start_point, hashId, '', website_id))
         self.conn.commit()
         return True
 
@@ -97,6 +98,33 @@ class Database:
 
     def find_tasks_for_hash(self, hashID):
         self.c.execute("SELECT * FROM tasks WHERE hash_id = '%s' AND used = 1" % hashID)
+        data = self.c.fetchall()
+        return data
+
+    def add_new_website(self, url):
+        # Generate public and private keys
+        # Public id assigns task to the website
+        # Private id is used to verify the task by the server
+        # They do not need to be cryptographically linked
+        private_key = str(uuid4())
+        public_key = str(uuid4())
+        return_data = {
+            "public_key": private_key,
+            "secret_key": public_key,
+            "url": url
+        }
+        command = 'INSERT INTO websites(url, privkey, pubkey) VALUES (?, ?, ?)'
+        self.c.execute(command, (url, private_key, public_key))
+        self.conn.commit()
+        return return_data
+
+    def get_website_by_pubkey(self, pubkey):
+        self.c.execute("SELECT * FROM websites WHERE pubkey = '%s'" % pubkey)
+        data = self.c.fetchall()
+        return data   
+
+    def get_website_by_privkey(self, privkey):
+        self.c.execute("SELECT * FROM websites WHERE privkey = '%s'" % privkey)
         data = self.c.fetchall()
         return data
 

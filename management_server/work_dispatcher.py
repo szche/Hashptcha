@@ -50,7 +50,7 @@ class WorkDispatcher:
         new_start_point_binary = new_start_point_binary.zfill(8*ceil(len(new_start_point_binary)/8))
         return new_start_point_binary
 
-    def select_task(self, hashes, difficulty=-1):
+    def select_task(self, hashes, key, difficulty=-1):
         # Skip all cracked hashes
         uncracked_hashes = [h for h in hashes if h[3] == 0]
         hashId, h, hashtype, cracked, plaintext = random.choice(uncracked_hashes)
@@ -67,7 +67,12 @@ class WorkDispatcher:
         token = str(uuid4())
         # Prefix adds some precoditions to the cracking process
         start_point = self.determine_start_point( self.db.find_tasks_for_hash(hashId) )
-        self.db.set_new_task(token, hashtype, binary_target, start_point, hashId)
+
+        # Determine website ID correlated with the pubkey
+        website = self.db.get_website_by_pubkey(key)
+        key = website[0][0]
+
+        self.db.set_new_task(token, hashtype, binary_target, start_point, hashId, key)
 
         return_data = {
             "target": binary_target,
@@ -79,10 +84,16 @@ class WorkDispatcher:
     
 
     def verify_task(self, data):
-        db_token, db_used, db_hashtype, db_target, db_start_point, hashId, suffix = self.db.get_task(data['token'])[0]
+        db_token, db_used, db_hashtype, db_target, db_start_point, hashId, suffix, db_website_id = self.db.get_task(data['token'])[0]
         # Return false if token already used
         if db_used == True:
             return False
+
+        # Return false if website_id and data["secret_key"] not corelated
+        website = self.db.get_website_by_privkey(data['secret_key'])
+        if db_website_id != website[0][0]:
+            return False
+
 
         solution_bytes = self.binary_to_bytes( data['value'] )
         soltion_hashed = self.hash( solution_bytes, db_hashtype )
@@ -102,30 +113,10 @@ class WorkDispatcher:
         value_bytes = self.binary_to_bytes(value)
         value_hashed = self.hash(value_bytes, db_hashtype)
         if value_hashed == db_hash:
-            print("CRACKED!")
             self.db.set_hash_as_cracked(hashId, True, value)
 
 
 
 if __name__ == "__main__":
     worker = WorkDispatcher()
-    worker.get_hashtype_info("MD5")
-    h = worker.binary_to_bytes('01111011')
-    print(h)
-    md5 = worker.hash(h, 'MD5')
-    print(md5)
-    print(worker.hex_to_binary(md5, 128))
-    # point = worker.bump_binary_point('0'*8)
-    # for i in range(1000):
-    #     point = worker.bump_binary_point(point)
-    #     #print(point)
-    #     point_bytes = worker.binary_to_bytes(point)
-    #     h = worker.hash(point_bytes, "MD5")
-    #     #print(h)
-    
-    # solution = worker.binary_to_bytes('000011000100000101100100')
-    # h = worker.hash(solution, 'MD5')
-    # print(h)
-    # b = worker.hex_to_binary(h, 128)
-    # print(b)
-    # print(b.startswith('10001010001000000001') and int('000011000100000101100100', 2) > int('00000000', 2))
+

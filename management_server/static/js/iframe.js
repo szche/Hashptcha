@@ -3,6 +3,7 @@ let solved_data;
 
 // Verification for debugging purposes
 function verify(data) {
+	data["secret_key"] = '0c7906a0-8c45-4cb1-b8b2-cf8cd259d7fd'
 	fetch('/verify', {
 		method: 'POST',
 		headers: {
@@ -80,11 +81,13 @@ function showLoader() {
 }
 
 function fetchTask() {
+	const href = window.location.href;
+	const key = href.substring( href.search("key=")+4, );
 	showLoader();
-	fetch('/get-task')
+	fetch(`/get-task?k=${key}`)
 		.then(response => response.json())
 		.then(data => {
-			console.log(data);
+			console.log("New task: ", data);
 			const task_completed = start_work(data).then((x) => {
 				solved_data = x;
 				markAsDone();
