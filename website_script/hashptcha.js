@@ -2,14 +2,14 @@ const hashptcha = new class {
 	constructor() {
 		this.div = document.querySelector(".hashptcha");
 		this.site_key = this.div.getAttribute("site-key");
-		this.server_url = "http://127.0.0.1:5000/frame";
+		this.server_url = `http://127.0.0.1:5000/frame`;
 		this.render();
 		this.listen();
 	}
 
 	render() {
 		this.iframe = document.createElement("iframe");
-		this.iframe.src = this.server_url + '?' + this.site_key;
+		this.iframe.src = this.server_url + '?key=' + this.site_key;
 		this.iframe.id = "HashptchaIframe";
 		this.iframe.width = "250px";
 		this.iframe.height = "60px";
