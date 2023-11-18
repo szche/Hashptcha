@@ -10,7 +10,7 @@ class WorkDispatcher:
     def __init__(self):
         self.db = Database()
         self.default_targets = {
-            'SHA256': 18,
+            'SHA256': 17,
             'MD5': 20
         }
 
@@ -91,8 +91,8 @@ class WorkDispatcher:
 
         # Return false if website_id and data["secret_key"] not corelated
         website = self.db.get_website_by_privkey(data['secret_key'])
-        if db_website_id != website[0][0]:
-            return False
+        #if db_website_id != website[0][0]:
+        #    return False
 
 
         solution_bytes = self.binary_to_bytes( data['value'] )

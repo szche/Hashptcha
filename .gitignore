@@ -1,4 +1,3 @@
 *.swp
 *.un~
 __pycache__
-*.db
